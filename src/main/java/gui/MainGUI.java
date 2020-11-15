@@ -34,6 +34,7 @@ public class MainGUI extends JFrame {
 	private JButton jButtonQueryQueries = null;
 
     private static BLFacade appFacadeInterface;
+   
 	
 	public static BLFacade getBusinessLogic(){
 		return appFacadeInterface;
@@ -42,6 +43,8 @@ public class MainGUI extends JFrame {
 	public static void setBussinessLogic (BLFacade afi){
 		appFacadeInterface=afi;
 	}
+	
+	
 	protected JLabel jLabelSelectOption;
 	private JRadioButton rdbtnNewRadioButton;
 	private JRadioButton rdbtnNewRadioButton_1;
@@ -155,6 +158,18 @@ public class MainGUI extends JFrame {
 			});
 			btnErreplikatu.setBounds(242, 186, 211, 45);
 			jContentPane.add(btnErreplikatu);
+			
+			/*JButton TableOf = new JButton(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.btnNewButton.text")); //$NON-NLS-1$ //$NON-NLS-2$
+			TableOf.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					//Jframe a = new algo();
+					//a.setVisible(true);
+				}
+			});
+			TableOf.setBounds(242, 14, 211, 34);
+			jContentPane.add(TableOf);*/
+			
+			
 		}
 		return jContentPane;
 	}

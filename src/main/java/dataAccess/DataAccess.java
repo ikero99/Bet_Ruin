@@ -43,11 +43,11 @@ public class DataAccess  {
 	private Vector<Erabiltzaile>recurrent=new Vector<Erabiltzaile>();
 
 
-	ConfigXML c;
+	ConfigXML c	=ConfigXML.getInstance();
+	
 
 	public DataAccess(boolean initializeMode)  {
 		
-		c=ConfigXML.getInstance();
 		
 		System.out.println("Creating DataAccess instance => isDatabaseLocal: "+c.isDatabaseLocal()+" getDatabBaseOpenMode: "+c.getDataBaseOpenMode());
 
@@ -67,6 +67,31 @@ public class DataAccess  {
 
 			  db = emf.createEntityManager();
     	   }
+	}
+	
+public void open(boolean initializeMode){
+		
+		System.out.println("Opening DataAccess instance => isDatabaseLocal: "+c.isDatabaseLocal()+" getDatabBaseOpenMode: "+c.getDataBaseOpenMode());
+
+		String fileName=c.getDbFilename();
+		if (initializeMode) {
+			fileName=fileName+";drop";
+			System.out.println("Deleting the DataBase");
+		}
+		
+		if (c.isDatabaseLocal()) {
+			  emf = Persistence.createEntityManagerFactory("objectdb:"+fileName);
+			  db = emf.createEntityManager();
+		} else {
+			Map<String, String> properties = new HashMap<String, String>();
+			  properties.put("javax.persistence.jdbc.user", c.getUser());
+			  properties.put("javax.persistence.jdbc.password", c.getPassword());
+
+			  emf = Persistence.createEntityManagerFactory("objectdb://"+c.getDatabaseNode()+":"+c.getDatabasePort()+"/"+fileName, properties);
+
+			  db = emf.createEntityManager();
+    	   }
+		
 	}
 
 	public DataAccess()  {	

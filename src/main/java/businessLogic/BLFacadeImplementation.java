@@ -21,25 +21,40 @@ import exceptions.ErabiltzaileNoExist;
 import exceptions.EventFinished;
 import exceptions.KuotaAlreadyExist;
 import exceptions.QuestionAlreadyExist;
+import iterator.EventsIterator;
+import iterator.ExtendedIterator;
 
 /**
  * It implements the business logic as a web service.
  */
 @WebService(endpointInterface = "businessLogic.BLFacade")
 public class BLFacadeImplementation  implements BLFacade {
-
+		DataAccess dbManager;
 	public BLFacadeImplementation()  {		
 		System.out.println("Creating BLFacadeImplementation instance");
 		ConfigXML c=ConfigXML.getInstance();
 		
 		if (c.getDataBaseOpenMode().equals("initialize")) {
-			DataAccess dbManager=new DataAccess(c.getDataBaseOpenMode().equals("initialize"));
+			dbManager=new DataAccess(c.getDataBaseOpenMode().equals("initialize"));
 			dbManager.initializeDB();
 			dbManager.close();
 			}
 		
 	}
 	
+	public BLFacadeImplementation(DataAccess da)  {
+		
+		System.out.println("Creating BLFacadeImplementation instance with DataAccess parameter");
+		ConfigXML c=ConfigXML.getInstance();
+		
+		if (c.getDataBaseOpenMode().equals("initialize")) {
+			da.open(true);
+			da.initializeDB();
+			da.close();
+
+		}
+		dbManager=da;		
+	}
 
 	/**
 	 * This method creates a question for an event, with a question text and the minimum bet
@@ -76,14 +91,34 @@ public class BLFacadeImplementation  implements BLFacade {
 	 * @param date in which events are retrieved
 	 * @return collection of events
 	 */
-    @WebMethod	
+   /* @WebMethod	
 	public Vector<Event> getEvents(Date date)  {
 		DataAccess dbManager=new DataAccess();
 		Vector<Event>  events=dbManager.getEvents(date);
 		dbManager.close();
 		return events;
-	}
+	}*/
 
+    public Vector<Event> getEvents(Date date){
+ 	   Date d= new Date();
+ 	   d=date;
+ 	   ExtendedIterator<Event> iterator= IteratorEvents(d);
+ 	   Vector<Event> events= new Vector<Event>();
+ 	   while(iterator.hasNext()) {
+ 		   Event e=(Event)iterator.next();
+ 		   events.add(e);
+ 	   }
+ 	   return events;
+ 	   
+    }
+     
+    public ExtendedIterator<Event> IteratorEvents(Date date){
+ 	   DataAccess dbManager=new DataAccess();
+ 		Vector<Event>  events=dbManager.getEvents(date);
+ 		dbManager.close();
+ 		EventsIterator iterator= new EventsIterator(events);
+ 		return iterator;
+     }
     
 	/**
 	 * This method invokes the data access to retrieve the dates a month for which there are events
